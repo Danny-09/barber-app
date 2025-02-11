@@ -2,18 +2,20 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
+import { Role } from './users/entities/role.entity';
 
 @Module({
   imports: [
     // Configuración de TypeORM con MySQL
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST,
+      host: '127.0.0.1',
       port: parseInt(process.env.DB_PORT || '3306'),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [],
+      username: 'root',
+      password: '',
+      database: 'barbershop_app',
+      entities: [User, Role],
       synchronize: true, // Sincroniza la base de datos con las entidades (sólo en desarrollo)
     }),
     ConfigModule.forRoot(),
