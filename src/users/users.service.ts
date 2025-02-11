@@ -1,27 +1,64 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { UserRoleEnum } from 'src/enums/user-role';
 
 @Injectable()
 export class UsersService {
-  constructor() {}
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
+
+  public async create(body: CreateUserDto): Promise<User> {
+    try {
+      return await this.userRepository.save(body);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      throw new Error(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  public async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      return await this.userRepository.update(id, updateUserDto);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      throw new Error(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  public async remove(id: number) {
+    try {
+      return await this.userRepository.delete(id);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      throw new Error(error);
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  public async findCustomers(): Promise<User[]> {
+    try {
+      return await this.userRepository.find({
+        where: { role_id: UserRoleEnum.CUSTOMER },
+      });
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      throw new Error(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  public async findBarbers(): Promise<User[]> {
+    try {
+      return await this.userRepository.find({
+        where: { role_id: UserRoleEnum.BARBER },
+      });
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      throw new Error(error);
+    }
   }
 }
