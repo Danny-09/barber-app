@@ -17,7 +17,6 @@ export class UsersService {
     try {
       return await this.userRepository.save(body);
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new Error(error);
     }
   }
@@ -26,7 +25,6 @@ export class UsersService {
     try {
       return await this.userRepository.update(id, updateUserDto);
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new Error(error);
     }
   }
@@ -35,7 +33,6 @@ export class UsersService {
     try {
       return await this.userRepository.delete(id);
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new Error(error);
     }
   }
@@ -46,7 +43,6 @@ export class UsersService {
         where: { role_id: UserRoleEnum.CUSTOMER },
       });
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new Error(error);
     }
   }
@@ -57,7 +53,6 @@ export class UsersService {
         where: { role_id: UserRoleEnum.BARBER },
       });
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new Error(error);
     }
   }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,7 +6,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Post('create')
   public async create(@Body() body: CreateUserDto) {
@@ -44,11 +44,17 @@ export class UsersController {
 
   @Get('customers')
   public async findCustomers() {
-    return this.usersService.findCustomers();
+    const customers = await this.usersService.findCustomers();
+    return customers && customers.length > 0
+      ? customers
+      : (() => { throw new HttpException({ message: 'No customers found' }, HttpStatus.NOT_FOUND); })();
   }
 
   @Get('barbers')
   public async findBarbers() {
-    return this.usersService.findBarbers();
+    const barbers = await this.usersService.findBarbers();
+    return barbers && barbers.length > 0
+      ? barbers
+      : (() => { throw new HttpException({ message: 'No barbers found' }, HttpStatus.NOT_FOUND); })();
   }
 }

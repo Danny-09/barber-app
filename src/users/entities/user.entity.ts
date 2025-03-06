@@ -1,8 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { JoinColumn } from 'typeorm';
 import { Role } from './role.entity';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,7 +23,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone: string;
 
   @ManyToOne(() => Role, (role) => role.users)
@@ -25,4 +32,13 @@ export class User {
 
   @Column()
   role_id: number;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @CreateDateColumn({ nullable: true })
+  created_at: Date;
+
+  @UpdateDateColumn({ nullable: true })
+  updated_at: Date;
 }
