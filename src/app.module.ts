@@ -1,25 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { User } from './users/entities/user.entity';
-import { Role } from './users/entities/role.entity';
-
 @Module({
   imports: [
     // Configuración de TypeORM con MySQL
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: '127.0.0.1',
-      port: parseInt(process.env.DB_PORT || '3306'),
-      username: 'root',
-      password: '',
-      database: 'barbershop_app',
-      entities: [User, Role],
-      synchronize: true, // Sincroniza la base de datos con las entidades (sólo en desarrollo)
+    ConfigModule.forRoot({
+      envFilePath: '.env',
     }),
-    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get('DB_HOST'),
+        port: configService.get('DB_PORT'),
+        username: configService.get('DB_USER'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        autoLoadEntities: true,
+        synchronize: false, // Sincroniza la base de datos con las entidades (sólo en desarrollo)
+      }),
+      inject: [ConfigService],
+    }),
     UsersModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
