@@ -1,20 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserRoleEnum } from 'src/enums/user-role';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   public async create(body: CreateUserDto): Promise<User> {
     try {
+      body.password = await bcrypt.hash(body.password, 10);
       return await this.userRepository.save(body);
     } catch (error) {
       throw new Error(error);
@@ -56,4 +58,8 @@ export class UsersService {
       throw new Error(error);
     }
   }
+
+  public async findByEmail(email: string): Promise<User|any> {
+    return await this.userRepository.findOneBy( {email} );
+  } 
 }
