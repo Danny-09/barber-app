@@ -1,15 +1,21 @@
-import { Controller, Get, Post, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Roles } from '@/decorators/roles.decorator';
+import { AuthGuard } from '@/auth/guard/auth.guard';
+import { RolesGuard } from '@/auth/guard/roles.guard';
+import { UserRoleEnum } from '@/enums/user-role';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) { }
 
-  @Post('create')
-  public async create(@Body() body: CreateUserDto) {
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.SUPER_ADMIN)
+  @Post('register')
+  public async createByAdmin(@Body() body: CreateUserDto) {
     const response = await this.usersService.create(body);
 
     return {
@@ -19,6 +25,19 @@ export class UsersController {
     };
   }
 
+  @Post('public-register')
+  public async create(@Body() body: CreateUserDto) {
+    const response = await this.usersService.create(body);
+
+    return {
+      status: 'success',
+      message: 'You have successfully registered',
+      data: response,
+    };
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.SUPER_ADMIN, UserRoleEnum.BARBER, UserRoleEnum.CUSTOMER)
   @Patch('update/:id')
   public async update(
     @Param('id') id: string,
@@ -42,6 +61,8 @@ export class UsersController {
     };
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.SUPER_ADMIN)
   @Get('customers')
   public async findCustomers() {
     const customers = await this.usersService.findCustomers();
@@ -50,6 +71,8 @@ export class UsersController {
       : (() => { throw new HttpException({ message: 'No customers found' }, HttpStatus.NOT_FOUND); })();
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.SUPER_ADMIN, UserRoleEnum.CUSTOMER)
   @Get('barbers')
   public async findBarbers() {
     const barbers = await this.usersService.findBarbers();

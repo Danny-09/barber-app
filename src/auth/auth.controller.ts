@@ -16,6 +16,7 @@ export class AuthController {
         return this.authService.signIn(credentials.email, credentials.password);
     }
 
+    // This route is a example by Guards
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(UserRoleEnum.BARBER)
     @Get('profile')
