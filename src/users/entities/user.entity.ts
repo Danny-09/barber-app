@@ -5,9 +5,11 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { JoinColumn } from 'typeorm';
 import { Role } from './role.entity';
+import { Service } from '../../services/entities/service.entity'; 
 
 @Entity('users')
 export class User {
@@ -41,4 +43,7 @@ export class User {
 
   @UpdateDateColumn({ nullable: true })
   updated_at: Date;
+
+  @OneToMany(() => Service, (service) => service.barber_id)
+  services: Service[];
 }
