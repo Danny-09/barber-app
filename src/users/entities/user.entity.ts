@@ -10,6 +10,8 @@ import {
 import { JoinColumn } from 'typeorm';
 import { Role } from './role.entity';
 import { Service } from '../../services/entities/service.entity'; 
+import { Appointment } from '../../appointments/entities/appointment.entity';
+import { Schedule } from '../../schedules/entities/schedule.entity';
 
 @Entity('users')
 export class User {
@@ -46,4 +48,13 @@ export class User {
 
   @OneToMany(() => Service, (service) => service.barber_id)
   services: Service[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.user_id)
+  customer_appointments: Appointment[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.barber_id)
+  barber_appointments: Appointment[];
+
+  @OneToMany(() => Schedule, (schedule) => schedule.barber_id)
+  schedules: Schedule[];
 }
