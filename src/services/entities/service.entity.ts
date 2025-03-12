@@ -1,5 +1,6 @@
+import { Appointment } from "../../appointments/entities/appointment.entity";
 import { User } from "../../users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('services')
 export class Service {
@@ -31,4 +32,7 @@ export class Service {
 
     @UpdateDateColumn({ nullable: true })
     updated_at: Date;
+
+    @OneToMany(() => Appointment, (appointment) => appointment.service_id)
+    appointments: Appointment[];
 }
