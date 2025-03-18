@@ -49,17 +49,19 @@ export class UsersService {
     }
   }
 
-  public async findBarbers(): Promise<User[]> {
+  public async findBarbers(): Promise<Partial<User>[]> {
     try {
-      return await this.userRepository.find({
+      const barbers = await this.userRepository.find({
         where: { role_id: UserRoleEnum.BARBER },
       });
+
+      return barbers.map(({ password, role_id, email, created_at, updated_at, ...rest }) => rest);
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  public async findByEmail(email: string): Promise<User|any> {
-    return await this.userRepository.findOneBy( {email} );
-  } 
+  public async findByEmail(email: string): Promise<User | any> {
+    return await this.userRepository.findOneBy({ email });
+  }
 }

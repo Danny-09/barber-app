@@ -28,7 +28,7 @@ export class ServicesService {
     options: IPaginationOptions
   ): Promise<Pagination<Service>> {
     const queryBuilder = this.serviceRepository.createQueryBuilder('service')
-      .where('service.barber_id = :barber_id', { barber_id });
+      .where('service.barber_id = :barber_id AND service.status = :status', { barber_id, status: true });
 
     return paginate<Service>(queryBuilder, options);
   }

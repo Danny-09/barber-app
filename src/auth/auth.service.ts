@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '@/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bycrypt from 'bcrypt';
+import { UserRoleEnum } from '@/enums/user-role';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
         return {
             email,
             token,
+            role: UserRoleEnum[user.role_id],
         }
     }
 }
