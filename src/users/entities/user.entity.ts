@@ -12,6 +12,7 @@ import { Role } from './role.entity';
 import { Service } from '../../services/entities/service.entity'; 
 import { Appointment } from '../../appointments/entities/appointment.entity';
 import { Schedule } from '../../schedules/entities/schedule.entity';
+import { Image } from '../../images/entities/image.entity';
 
 @Entity('users')
 export class User {
@@ -57,4 +58,7 @@ export class User {
 
   @OneToMany(() => Schedule, (schedule) => schedule.barber_id)
   schedules: Schedule[];
+
+  @OneToMany(() => Image, (image) => image.barber_id)
+  images: Image[];
 }

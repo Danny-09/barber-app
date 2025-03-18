@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { ImagesModule } from './images/images.module';
 @Module({
   imports: [
     // Configuración de TypeORM con MySQL
@@ -31,6 +32,7 @@ import { SchedulesModule } from './schedules/schedules.module';
     ServicesModule,
     AppointmentsModule,
     SchedulesModule,
+    ImagesModule,
   ],
 })
 export class AppModule { }

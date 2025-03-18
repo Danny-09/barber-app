@@ -18,7 +18,6 @@ export class AppointmentsService {
   ) { }
 
   async create(createAppointmentDto: CreateAppointmentDto) {
-    // Aplicar validaciones para saber si la fecha y hora de la cita ya está ocupada
     return await this.appointmentRepository.save(createAppointmentDto);
   }
 
