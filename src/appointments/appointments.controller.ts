@@ -24,11 +24,6 @@ export class AppointmentsController {
   async appointmentsByMonth(@Param('month') month: number, @Param('year') year: number, @Param('barber_id') barber_id: number) {
     return await this.appointmentsService.appointmentsByMonth(month, year, barber_id);
   }
-  //Pendiente aun de implementar
-  @Get('schedules')
-  async appointmentsSchedules() {
-    return await this.appointmentsService.appointmentsSchedules();
-  }
 
   @Roles(UserRoleEnum.BARBER, UserRoleEnum.CUSTOMER)
   @Patch(':id')

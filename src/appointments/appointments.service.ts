@@ -38,69 +38,6 @@ export class AppointmentsService {
     });
   }
 
-  async appointmentsSchedules() {
-    // Obtener los slots disponibles para agendar citas
-    // Mostrar acorde al mes actual los dias y las horas disponible
-    const today = DateTime.now();
-    const start = today.startOf('month');
-    const end = today.endOf('month');
-
-    // Ejemplo de horarios del barbero (simulación)
-    const barberSchedules = await this.schedulesService.findByBarber(10);
-    // Mapea nombres de días a números
-    const dayMap = {
-      'Lunes': 1,
-      'Martes': 2,
-      'Miercoles': 3,
-      'Jueves': 4,
-      'Viernes': 5,
-      'Sabado': 6,
-    };
-
-    // Convierte la lista en un mapa por día numérico
-    const scheduleMap = {};
-    for (const schedule of barberSchedules) {
-      const dayNumber = dayMap[schedule.day];
-      if (dayNumber) {
-        scheduleMap[dayNumber] = {
-          start: schedule.start_time, // ej. "12"
-          end: schedule.end_time      // ej. "22"
-        };
-      }
-    }
-
-    const slotsPerDay = {};
-
-    for (let day = start; day <= end; day = day.plus({ days: 1 })) {
-      const dayOfWeek = day.weekday; // 1-7
-
-      if (scheduleMap[dayOfWeek]) {
-        const { start, end } = scheduleMap[dayOfWeek];
-
-        // Convierte a DateTime
-        let currentTime = DateTime.fromISO(`${day.toISODate()}T${start.padStart(2, '0')}:00`);
-        const endTime = DateTime.fromISO(`${day.toISODate()}T${end.padStart(2, '0')}:00`);
-
-        const slots: string[] = [];
-        while (currentTime < endTime) {
-          slots.push(currentTime.toFormat('HH:mm'));
-          currentTime = currentTime.plus({ minutes: 30 });
-        }
-
-        slotsPerDay[day.toISODate()] = slots;
-      }
-    }
-
-    const appointments = await this.appointmentsByMonth(today.month, today.year, 10);
-
-    return {
-      month: today.monthLong,
-      year: today.year,
-      available_slots: slotsPerDay,
-      // citas_del_mes: appointments,
-    };
-  }
-
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
     const appointment = await this.appointmentRepository.findOneBy({ id });
 
