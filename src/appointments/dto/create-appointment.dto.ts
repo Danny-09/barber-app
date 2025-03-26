@@ -1,5 +1,5 @@
 import { StatusEnum } from "@/enums/status.enum";
-import { IsBoolean, IsDate, IsDateString, IsEmpty, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsBoolean, IsDate, IsDateString, IsEmail, IsEmpty, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
 export class CreateAppointmentDto {
     
@@ -7,9 +7,9 @@ export class CreateAppointmentDto {
     @IsDateString()
     date: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
-    user_id: number;
+    user_id?: number;
 
     @IsNotEmpty()
     @IsNumber()
@@ -26,4 +26,8 @@ export class CreateAppointmentDto {
     @IsOptional()
     @IsNumber({})
     total?: number;
+
+    @IsNotEmpty()
+    @IsEmail({})
+    email: string;
 }

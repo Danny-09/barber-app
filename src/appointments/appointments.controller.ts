@@ -11,7 +11,7 @@ import { UserRoleEnum } from '@/enums/user-role';
 @Controller('appointments')
 export class AppointmentsController {
 
-  constructor(private readonly appointmentsService: AppointmentsService) {}
+  constructor(private readonly appointmentsService: AppointmentsService) { }
 
   @Roles(UserRoleEnum.CUSTOMER)
   @Post()
@@ -23,6 +23,12 @@ export class AppointmentsController {
   @Get(':month/:year/:barber_id')
   async appointmentsByMonth(@Param('month') month: number, @Param('year') year: number, @Param('barber_id') barber_id: number) {
     return await this.appointmentsService.appointmentsByMonth(month, year, barber_id);
+  }
+
+  @Roles(UserRoleEnum.BARBER, UserRoleEnum.CUSTOMER)
+  @Get(':email')
+  async appointmentsByUser(@Param('email') email: string) {
+    return await this.appointmentsService.appointmentsByUser(email);
   }
 
   @Roles(UserRoleEnum.BARBER, UserRoleEnum.CUSTOMER)

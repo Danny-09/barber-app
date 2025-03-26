@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DateTime } from 'luxon';
 import { StatusEnum } from '@/enums/status.enum';
 import { SchedulesService } from '@/schedules/schedules.service';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -14,10 +15,12 @@ export class AppointmentsService {
   constructor(
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
-    private readonly schedulesService: SchedulesService,
+    private userService: UsersService,
   ) { }
 
   async create(createAppointmentDto: CreateAppointmentDto) {
+    const user = await this.userService.findByEmail(createAppointmentDto.email);
+    createAppointmentDto.user_id = user.id;
     return await this.appointmentRepository.save(createAppointmentDto);
   }
 
@@ -38,6 +41,14 @@ export class AppointmentsService {
     });
   }
 
+  async appointmentsByUser(email: string) {
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return await this.appointmentRepository.find({ where: { user_id: user.id } });
+  }
+
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
     const appointment = await this.appointmentRepository.findOneBy({ id });
 
@@ -52,7 +63,7 @@ export class AppointmentsService {
   }
 
   async enable(id: number) {
-    const appointment = await this.appointmentRepository.findOneBy({id});
+    const appointment = await this.appointmentRepository.findOneBy({ id });
 
     if (!appointment) {
       throw new NotFoundException('appointment not found');
@@ -65,7 +76,7 @@ export class AppointmentsService {
   }
 
   async disable(id: number) {
-    const appointment = await this.appointmentRepository.findOneBy({id});
+    const appointment = await this.appointmentRepository.findOneBy({ id });
 
     if (!appointment) {
       throw new NotFoundException('appointment not found');
@@ -78,7 +89,7 @@ export class AppointmentsService {
   }
 
   async endend(id: number) {
-    const appointment = await this.appointmentRepository.findOneBy({id});
+    const appointment = await this.appointmentRepository.findOneBy({ id });
 
     if (!appointment) {
       throw new NotFoundException('appointment not found');
