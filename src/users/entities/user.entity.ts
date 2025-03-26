@@ -13,6 +13,7 @@ import { Service } from '../../services/entities/service.entity';
 import { Appointment } from '../../appointments/entities/appointment.entity';
 import { Schedule } from '../../schedules/entities/schedule.entity';
 import { Image } from '../../images/entities/image.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -25,6 +26,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Exclude()
   @Column()
   password: string;
 

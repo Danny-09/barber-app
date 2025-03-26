@@ -6,8 +6,8 @@ import { Appointment } from './entities/appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DateTime } from 'luxon';
 import { StatusEnum } from '@/enums/status.enum';
-import { SchedulesService } from '@/schedules/schedules.service';
 import { UsersService } from '@/users/users.service';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class AppointmentsService {
@@ -41,12 +41,20 @@ export class AppointmentsService {
     });
   }
 
-  async appointmentsByUser(email: string) {
+  async appointmentsByUser(email: string): Promise<Appointment[]> {
     const user = await this.userService.findByEmail(email);
     if (!user) {
       throw new Error('User not found');
     }
-    return await this.appointmentRepository.find({ where: { user_id: user.id } });
+    const appointments = await this.appointmentRepository.find({
+      where: {
+        user_id: user.id,
+        status: StatusEnum.ACTIVE,
+      },
+      relations: ['barber', 'service'],
+    });
+
+    return plainToClass(Appointment, appointments);
   }
 
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
@@ -69,7 +77,7 @@ export class AppointmentsService {
       throw new NotFoundException('appointment not found');
     }
 
-    appointment.status = 1;
+    appointment.status = StatusEnum.ACTIVE;
     await this.appointmentRepository.save(appointment);
 
     return appointment;
@@ -82,7 +90,7 @@ export class AppointmentsService {
       throw new NotFoundException('appointment not found');
     }
 
-    appointment.status = 2;
+    appointment.status = StatusEnum.AVAILABLE;
     await this.appointmentRepository.save(appointment);
 
     return appointment;
@@ -95,7 +103,7 @@ export class AppointmentsService {
       throw new NotFoundException('appointment not found');
     }
 
-    appointment.status = 3;
+    appointment.status = StatusEnum.ENDEND;
     await this.appointmentRepository.save(appointment);
 
     return appointment;
