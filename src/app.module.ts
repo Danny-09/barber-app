@@ -23,7 +23,16 @@ import { ImagesModule } from './images/images.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: false, // Sincroniza la base de datos con las entidades (sólo en desarrollo)
+        synchronize: true,
+        ssl: configService.get('POSTGRES_SSL') === "true",
+        extra: {
+          ssl:
+            configService.get('POSTGRES_SSL') === "true"
+            ? {
+              rejectUnauthorized: false,
+            }
+            : null,
+        }
       }),
       inject: [ConfigService],
     }),
