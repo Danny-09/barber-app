@@ -69,6 +69,17 @@ export class UsersService {
   }
 
   public async roles(): Promise<Role[]> {
+
+    // Si no existen roles, inserta roles manualmente
+    const rolesToInsert = [
+      { name: 'SUPER_ADMIN' },
+      { name: 'BARBER' },
+      { name: 'CUSTOMER' },
+    ]
+
+    await this.roleRepository.save(rolesToInsert); // Inserta los roles manualmente
+
+    // Devuelve todos los roles (insertados o existentes)
     return await this.roleRepository.find();
   }
 }
