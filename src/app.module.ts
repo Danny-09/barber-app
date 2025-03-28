@@ -23,7 +23,7 @@ import { ImagesModule } from './images/images.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
         ssl: configService.get('POSTGRES_SSL') === "true",
         extra: {
           ssl:
