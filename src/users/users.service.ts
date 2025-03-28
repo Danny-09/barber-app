@@ -19,7 +19,7 @@ export class UsersService {
       body.password = await bcrypt.hash(body.password, 10);
       return await this.userRepository.save(body);
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 

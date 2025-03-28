@@ -27,13 +27,24 @@ export class UsersController {
 
   @Post('public-register')
   public async create(@Body() body: CreateUserDto) {
-    const response = await this.usersService.create(body);
-
-    return {
-      status: 'success',
-      message: 'You have successfully registered',
-      data: response,
-    };
+    try {
+      const response = await this.usersService.create(body);
+      return {
+        status: 'success',
+        message: 'You have successfully registered',
+        data: response,
+      };
+    } catch (error) {
+      console.error('Error in registration:', error);
+      // Lanza una excepción HTTP 500 con el mensaje de error
+      throw new HttpException(
+        {
+          status: 'error',
+          message: error.message || 'An error occurred during registration',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @UseGuards(AuthGuard, RolesGuard)
@@ -79,5 +90,10 @@ export class UsersController {
     return barbers && barbers.length > 0
       ? barbers
       : (() => { throw new HttpException({ message: 'No barbers found' }, HttpStatus.NOT_FOUND); })();
+  }
+
+  @Get('checkapi')
+  public async api() {
+    return 'API EN INTERNET';
   }
 }
