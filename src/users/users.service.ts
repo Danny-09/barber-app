@@ -6,12 +6,15 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserRoleEnum } from 'src/enums/user-role';
 import * as bcrypt from 'bcrypt';
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
   ) { }
 
   public async create(body: CreateUserDto): Promise<User> {
@@ -63,5 +66,9 @@ export class UsersService {
 
   public async findByEmail(email: string): Promise<User | any> {
     return await this.userRepository.findOneBy({ email });
+  }
+
+  public async roles(): Promise<Role[]> {
+    return await this.roleRepository.find();
   }
 }

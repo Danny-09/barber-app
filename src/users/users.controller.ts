@@ -94,6 +94,6 @@ export class UsersController {
 
   @Get('checkapi')
   public async api() {
-    return 'API EN INTERNET';
+    return await this.usersService.roles();
   }
 }
