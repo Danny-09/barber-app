@@ -3,8 +3,8 @@ import { AppointmentsService } from './appointments.service';
 import { AppointmentsController } from './appointments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Appointment } from './entities/appointment.entity';
-import { SchedulesModule } from '@/schedules/schedules.module';
 import { UsersModule } from '@/users/users.module';
+import { AppointmentGateway } from '@/config/appointment.gateway';
 
 @Module({
   imports: [
@@ -12,6 +12,6 @@ import { UsersModule } from '@/users/users.module';
     UsersModule,
   ],
   controllers: [AppointmentsController],
-  providers: [AppointmentsService],
+  providers: [AppointmentsService, AppointmentGateway],
 })
 export class AppointmentsModule {}

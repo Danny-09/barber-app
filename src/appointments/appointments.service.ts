@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import { StatusEnum } from '@/enums/status.enum';
 import { UsersService } from '@/users/users.service';
 import { plainToClass } from 'class-transformer';
+import { AppointmentGateway } from '@/config/appointment.gateway';
 
 @Injectable()
 export class AppointmentsService {
@@ -16,12 +17,17 @@ export class AppointmentsService {
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
     private userService: UsersService,
+    private appointmentGateway: AppointmentGateway,
   ) { }
 
   async create(createAppointmentDto: CreateAppointmentDto) {
     const user = await this.userService.findByEmail(createAppointmentDto.email);
     createAppointmentDto.user_id = user.id;
-    return await this.appointmentRepository.save(createAppointmentDto);
+    
+    const appointment = await this.appointmentRepository.save(createAppointmentDto);
+    this.appointmentGateway.sendAppointmentUpdate(appointment);
+
+    return appointment;
   }
 
   async appointmentsByMonth(month: number, year: number, barber_id: number) {
