@@ -92,6 +92,15 @@ export class UsersController {
       : (() => { throw new HttpException({ message: 'No barbers found' }, HttpStatus.NOT_FOUND); })();
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.SUPER_ADMIN, UserRoleEnum.CUSTOMER, UserRoleEnum.BARBER)
+  @Get('by-email/:email')
+  public async findByEmail(@Param('email') email: string) {
+    const user = await this.usersService.findByEmail(email);
+
+    return { 'id': user.id };
+  }
+
   @Get('checkapi')
   public async api() {
     return await this.usersService.roles();

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,16 +14,39 @@ export class SchedulesService {
   ) { }
 
   async create(createScheduleDto: CreateScheduleDto) {
+    const existingDay = await this.scheduleRepository.findOne({
+      where: {
+        barber_id: createScheduleDto.barber_id,
+        day: createScheduleDto.day
+      }
+    });
+
+    if (existingDay) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: `Ya existe un horario registrado para el día ${createScheduleDto.day}.`,
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
     return await this.scheduleRepository.save(createScheduleDto);
   }
 
   async findByBarber(barber_id: number) {
-    return await this.scheduleRepository.find({
+    const schedules = await this.scheduleRepository.find({
       where: {
         barber_id: barber_id,
       },
     });
+
+    const dayOrder = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+    schedules.sort((a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day));
+
+    return schedules;
   }
+
 
   async update(id: number, updateScheduleDto: UpdateScheduleDto) {
     const schedule = await this.scheduleRepository.findOneBy({ id });
@@ -32,7 +55,9 @@ export class SchedulesService {
       throw new NotFoundException('Schedule not found');
     };
 
-    return await this.scheduleRepository.update(id, updateScheduleDto);
+    await this.scheduleRepository.update(id, updateScheduleDto);
+
+    return await this.scheduleRepository.findOneBy({ id })
   }
 
   async remove(id: number) {
