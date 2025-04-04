@@ -23,7 +23,7 @@ export class AppointmentsService {
   async create(createAppointmentDto: CreateAppointmentDto) {
     const user = await this.userService.findByEmail(createAppointmentDto.email);
     createAppointmentDto.user_id = user.id;
-    
+
     const appointment = await this.appointmentRepository.save(createAppointmentDto);
     this.appointmentGateway.sendAppointmentUpdate(appointment);
 
@@ -44,6 +44,7 @@ export class AppointmentsService {
       order: {
         date: 'ASC',
       },
+      relations: ['user', 'service'],
     });
   }
 

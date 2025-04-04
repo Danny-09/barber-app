@@ -28,7 +28,7 @@ export class ServicesService {
     options: IPaginationOptions
   ): Promise<Pagination<Service>> {
     const queryBuilder = this.serviceRepository.createQueryBuilder('service')
-      .where('service.barber_id = :barber_id AND service.status = :status', { barber_id, status: true });
+      .where('service.barber_id = :barber_id', { barber_id });
 
     return paginate<Service>(queryBuilder, options);
   }
@@ -40,8 +40,9 @@ export class ServicesService {
     if (!service) {
       throw new NotFoundException('Service not found');
     }
+    await this.serviceRepository.update(id, updateServiceDto);
 
-    return await this.serviceRepository.update(id, updateServiceDto);
+    return await this.serviceRepository.findOneBy({ id });
   }
 
   async findAllEnabled() {
@@ -53,7 +54,7 @@ export class ServicesService {
   }
 
   async enable(id: number) {
-    const service = await this.serviceRepository.findOneBy({id});
+    const service = await this.serviceRepository.findOneBy({ id });
 
     if (!service) {
       throw new NotFoundException('Service not found');
@@ -66,7 +67,7 @@ export class ServicesService {
   }
 
   async disable(id: number) {
-    const service = await this.serviceRepository.findOneBy({id});
+    const service = await this.serviceRepository.findOneBy({ id });
 
     if (!service) {
       throw new NotFoundException('Service not found');

@@ -41,11 +41,12 @@ export class ServicesController {
   @Roles(UserRoleEnum.BARBER)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    await this.servicesService.update(+id, updateServiceDto);
+    const response = await this.servicesService.update(+id, updateServiceDto);
 
     return {
       status: 'success',
       message: 'Service updated successfully',
+      data: response,
     };
   }
 
